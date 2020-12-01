@@ -78,4 +78,25 @@ router.post('/update/avatar', async (req, res) => {
   }
 })
 
+// 更新用户信息
+router.post('/userinfo', async (req, res) => {
+  // 1、获取参数
+  let params = req.body
+  // 2、操作数据库
+  let sql = 'update myuser set nickname = ?, email = ? where id = ?'
+  let ret = await db.operateDb(sql, [params.nickname, params.email, params.id])
+  // 3、响应状态
+  if (ret && ret.affectedRows > 0) {
+    res.json({
+      status: 0,
+      message: '更新用户信息成功'
+    })
+  } else {
+    res.json({
+      status: 1,
+      message: '更新用户信息失败'
+    })
+  }
+})
+
 module.exports = router 
