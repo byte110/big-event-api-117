@@ -13,6 +13,19 @@ const router = express.Router()
 router.post('/reguser', async (req, res) => {
   // 1、获取表单数据
   var params = req.body
+  
+  // 插入数据库之前，添加用户名重复性判断
+  let csql = 'select id from myuser where username = ?'
+  let flag = await db.operateDb(csql, params.username)
+  if (flag && flag.length > 0) {
+    // 用户名已经存在
+    res.json({
+      status: 1,
+      message: '用户名已经存在'
+    })
+    return
+  }
+
   // 2、把数据插入数据库
   var sql = 'insert into myuser set ?'
   let ret = await db.operateDb(sql, params)
