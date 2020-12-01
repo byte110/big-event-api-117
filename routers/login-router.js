@@ -47,6 +47,29 @@ router.post('/reguser', async (req, res) => {
   }
 })
 
+// 登录接口
+router.post('/login', async (req, res) => {
+  // 1、获取表单数据
+  let params = req.body
+  // 对密码再次加密
+  params.password = utility.md5(params.password)
+  // 2、查询数据库验证该用户是否存在
+  let sql = 'select id from myuser where username = ? and password = ?'
+  let ret = await db.operateDb(sql, [params.username, params.password])
+  // 3、根据判断的结果进行返回
+  if (ret && ret.length > 0) {
+    res.json({
+      status: 0,
+      message: '登录成功'
+    })
+  } else {
+    res.json({
+      status: 1,
+      message: '用户名或者密码错误'
+    })
+  }
+})
+
 // 测试数据库接口 
 router.get('/test', async (req, res) => {
   let sql = 'select * from myuser'
